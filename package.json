@@ -2,12 +2,19 @@
   "name": "RGB-crowdsale",
   "version": "1.0.0",
   "description": "Solidity Contracts for the RGB Tokens",
+  "directories": {
+    "test": "test"
+  },
   "dependencies": {
     "zeppelin-solidity": "^1.3.0"
   },
   "devDependencies": {
     "chai": "^4.1.2",
+    "ethereumjs-testrpc": "^6.0.1",
     "mocha": "^4.0.1",
     "truffle": "^4.0.1"
+  },
+  "scripts": {
+    "test": "./scripts/test.sh"
   }
 }
