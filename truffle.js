@@ -1,5 +1,10 @@
 module.exports = {
   networks: {
+    livenet: {
+      host: "localhost",
+      port: 8546,
+      network_id: "1" // Match any network id
+    },
     development: {
       host: "localhost",
       port: 8545,

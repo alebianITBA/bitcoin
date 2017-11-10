@@ -3,9 +3,10 @@ pragma solidity ^0.4.11;
 import "zeppelin-solidity/contracts/crowdsale/CappedCrowdsale.sol";
 import "zeppelin-solidity/contracts/crowdsale/Crowdsale.sol";
 import "zeppelin-solidity/contracts/crowdsale/FinalizableCrowdsale.sol";
+import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./REDToken.sol";
 
-contract REDCrowdsale is CappedCrowdsale, FinalizableCrowdsale {
+contract REDCrowdsale is Crowdsale, Ownable, CappedCrowdsale, FinalizableCrowdsale {
     uint256 public constant TOTAL_SHARE = 100;
     uint256 public constant CROWDSALE_SHARE = 80;
     uint256 public constant FOUNDATION_SHARE = 20;
