@@ -9,13 +9,13 @@ const REDToken = artifacts.require('./REDToken.sol');
 const BigNumber = web3.BigNumber;
 
 contract('REDCrowdsale', function ([_, wallet, wallet2, buyer, purchaser, buyer2, purchaser2]) {
-  const initialRate = new BigNumber(1000);
+  const initialRate = new web3.BigNumber(1000);
   const value = ether(1);
 
-  const expectedFoundationTokens = new BigNumber(1000);
-  const expectedTokenSupply = new BigNumber(5000);
+  const expectedFoundationTokens = new web3.BigNumber(1000);
+  const expectedTokenSupply = new web3.BigNumber(5000);
 
-  let startBlock, endBlock;
+  let startBlock, endBlock, startTime, endTime;
   let crowdsale, token;
 
   beforeEach(async function () {
@@ -28,6 +28,7 @@ contract('REDCrowdsale', function ([_, wallet, wallet2, buyer, purchaser, buyer2
       initialRate,
       wallet
     );
+
     token = REDToken.at(await crowdsale.token());
   });
 
@@ -39,21 +40,23 @@ contract('REDCrowdsale', function ([_, wallet, wallet2, buyer, purchaser, buyer2
   it('owner should be able to unpause token after crowdsale ends', async function () {
     await advanceToBlock(endBlock);
 
-    await crowdsale.unpauseToken().should.be.rejectedWith(EVMThrow);
+    await token.unpause().should.be.rejectedWith(EVMThrow);
 
     await crowdsale.finalize();
 
     let paused = await token.paused();
     paused.should.equal(true);
 
-    await crowdsale.unpauseToken();
+    await token.unpause();
 
     paused = await token.paused();
     paused.should.equal(false);
   });
 
   it('buyers should access tokens at price until end of auction', async function () {
-    await crowdsale.buyTokens(buyer, {value: value, from: buyer});
+    await advanceToBlock(startBlock - 1);
+
+    await crowdsale.buyTokens(buyer, {value, from: purchaser});
     const balance = await token.balanceOf(buyer);
     balance.should.be.bignumber.equal(value.mul(initialRate));
   });

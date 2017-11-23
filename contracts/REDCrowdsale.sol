@@ -10,6 +10,7 @@ contract REDCrowdsale is Crowdsale, Ownable, CappedCrowdsale, FinalizableCrowdsa
     uint256 public constant TOTAL_SHARE = 100;
     uint256 public constant CROWDSALE_SHARE = 80;
     uint256 public constant FOUNDATION_SHARE = 20;
+    bool public manuallyEnded = false;
 
     function REDCrowdsale(
         uint256 _startTime,
@@ -29,7 +30,7 @@ contract REDCrowdsale is Crowdsale, Ownable, CappedCrowdsale, FinalizableCrowdsa
     }
 
     function hasEnded() public constant returns (bool) {
-        return isFinalized || super.hasEnded();
+        return manuallyEnded || super.hasEnded();
     }
 
     // After the crowdsale is finished, mint foundation tokens
@@ -42,15 +43,11 @@ contract REDCrowdsale is Crowdsale, Ownable, CappedCrowdsale, FinalizableCrowdsa
 
         // NOTE: cannot call super here because it would finish minting and
         // the continuous sale would not be able to proceed
+        token.transferOwnership(owner);
     }
 
-    function unpauseToken() onlyOwner {
-        require(isFinalized);
-        REDToken(token).unpause();
-    }
-
-    function pauseToken() onlyOwner {
-        require(isFinalized);
-        REDToken(token).pause();
+    function finalize() onlyOwner public {
+        manuallyEnded = true;
+        super.finalize();
     }
 }
